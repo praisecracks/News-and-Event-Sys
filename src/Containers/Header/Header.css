@@ -1,0 +1,275 @@
+.header {
+    /* background-color: rgba(238, 241, 255, 0.933); */
+    background-color: red;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0%;
+    z-index: 1000;
+}
+
+.header .logo img{
+    width: 100px;
+    height: 80px;
+    mix-blend-mode: multiply;
+}
+.header .logo span{
+    font-size: 30px;
+}
+.home-list{
+    padding: 7px 20px;
+    background: linear-gradient(#507bda, #adc5f7);
+    display: flex;
+    border: none;
+    align-items: center;
+    border-radius: 20px;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+}
+.home-list:active{
+    transform: scale(1.1);
+    transition: 0.2s all ease-in-out;
+}
+
+.home-list img{
+    width: 25px;
+    border-radius: 40%;
+
+}
+.header  li {
+    list-style: none;
+    display: flex;
+    background: red;
+    padding: 10px;
+}
+
+
+.header li a{
+    color: #e6e6e6;
+    text-decoration: none;
+    font-size: 14px;
+}
+.search input{
+    width: 400px;
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    padding-left: 15px;
+    background-color: #dfdfdf;
+    margin-top: 20px;
+    outline: none;
+    position: relative;
+    padding-right: 40px;
+}
+
+.header .major .create button{
+    display: flex;
+    align-items: center;
+    border: 1px solid #02085e;
+    color: #02085e;
+    width: 100px;
+    background: transparent;
+    height: 40px;
+    justify-content: center;
+    border-radius: 20px;
+}
+.header .major a{
+    text-decoration: none;
+}
+.major .profile-pic{
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background-color: #b0b3d4;
+    border: 1px solid #f2f3f5;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 3px;
+}
+.major .profile-pic img{
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+}
+.headerTwo{
+    top: 0%;
+    z-index: 1000;
+    position: fixed;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    height: 70px;
+    margin-top: 90px;
+    padding:15px 0;
+    border-bottom: 2px solid #e9e8e8;
+}
+@media (max-width: 768px) {
+    .headerTwo{
+        display: flex;
+        justify-content: space-around;
+    }
+    .search{
+        width: 60%;
+        margin-right: 10px;
+    }
+  
+    .search input{
+        width: 100%;
+        
+    }
+    .latest h2{
+        font-size: 25px;
+        margin-left: 10px;
+    }
+    .latest{
+        width: 50%;
+
+        /* background-color: red; */
+    }
+}
+.headerTwo .latest{
+    font-size: 20px;
+    flex-wrap: nowrap;
+    font-family: sans-serif;
+    margin-top: 20px;
+}
+.latest h2{
+    font-weight: 50;
+    font-family: monospace;
+    word-spacing: -4px;
+    font-size: 30PX;
+
+}
+@media (max-width: 768px) {
+    .latest h2{
+        font-size: 25px;
+    }
+}
+@media (max-width: 480px) {
+    .latest h2{
+        font-size: 20px;
+    }
+}
+.search{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.search img{
+    margin-left: -30px;
+    margin-top: 20px;
+    z-index: 1;
+
+    
+}
+
+
+.HomeHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    padding: 0px 10px;
+    position: fixed;
+    background-color: #fff;
+    z-index: 1000;
+    top: 0%;
+}
+.headerNav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+    /* background-color: red; */
+}
+@media (min-width: 768px) {
+    .headerNav{
+        width: 60%;
+    }
+}
+.respobutton{
+    display: none;
+}
+@media (max-width: 768px) {
+    .headerNav{
+        flex-direction: column;
+        position: absolute;
+        top: -350px;
+        background: #02085e;
+        right: 0;
+        align-items: flex-end;
+        padding: 15px 40px;
+        height:50vh;
+        color: white;
+        transition: all ease-in-out .5s;
+        box-shadow: 0px 10px 10px #c0bfbf;
+        border-bottom-left-radius: 20px;
+    }
+    .respobutton{
+        font-size: 30px;
+        outline: none;
+        border: none;
+        width: fit-content;
+        padding: 5px;
+        background: #02085e;
+        display: block !important;
+    }
+}
+
+.create-admin-btn{
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0px;
+    height: 50px;
+    transition: 1s;
+    background: #507bda;
+    color: #fff;
+}
+.create-admin-btn img{
+    width: 25px;
+    height: 25px;
+}
+.create-admin-btn::after~.create-admin-btn img{
+    margin-right: -20px;
+}
+
+.create-admin-btn::after{
+    width: 10px;
+    background: #df9929;
+    padding: 10px;
+    height: fit-content;
+    width: 30px;
+    
+}
+.create-admin-btn:hover:after{
+    width: 150px;
+    background: transparent;
+    content: "Create Sub Admin";
+    padding: 10px;
+    content: "Create Sub Admin";
+    transition: 1s;
+
+}
+@media (max-width:768px) {
+    .create-admin-btn:hover:after{
+        width: 180px;
+        background: transparent;
+        padding: 10px;
+        content: "Create Admin";
+        transition: 1s;
+        width: 120px;
+    
+    }
+}

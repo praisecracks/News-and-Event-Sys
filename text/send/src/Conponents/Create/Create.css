@@ -1,0 +1,125 @@
+  
+  /* Create Component Styling */
+  .Create-container{
+    width: 100% !important;
+  }
+  .Create {
+    width: 100%;
+    /* max-width: 1200px; */
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  
+  /* Full Container Styling */
+  .full-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .real-container {
+    background-color: #fff;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Image Container Styling */
+  .img-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .img-container input{
+    display: none;
+  }
+
+  .img-container .sides{
+    gap: 20px;
+  }
+  .img-container .choose-file{
+    padding: 10px 20px;
+    background-color: #0066cc;
+    text-wrap: nowrap;
+    color: #fff;
+  }
+  .img-container .choose-file:nth-child(2){
+    background-color: #e66b71;
+  }
+  
+  .preview-img {
+    width: 100%;
+    max-width: 300px;
+    height: 250px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+  }
+  
+  .sides {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .choose-file {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 20px;
+  }
+  
+  .choose-file label {
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .choose-file img {
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  /* Input Fields */
+  .input-field {
+    margin-top: 20px;
+  }
+  
+  .input-field label {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .input-field textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: none;
+  }
+  
+  .input-field button {
+    background-color: #0066cc;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .input-field button:hover {
+    background-color: #004d99;
+  }
+  #file{
+    /* display: block !important; */
+  }
