@@ -21,11 +21,7 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [notifications, setNotifications] = useState({ email: false, push: false });
 
-  const [userData, setUserData] = useState({
-    name: currentUser?.displayName,
-    email: currentUser?.email,
-    profilePicture: currentUser?.photoURL || profileImg,
-  });
+  const [darkMode, setDarkMode] = useState(false); // 🌙 dark mode state
 
   useEffect(() => {
     setIsLoading(true);
@@ -44,6 +40,15 @@ function Profile() {
 
     return () => unsubscribe();
   }, [currentUser?.uid]);
+
+  // 🔁 Apply dark mode class
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', darkMode);
+  }, [darkMode]);
+
+  const handleDarkModeToggle = () => {
+    setDarkMode(prev => !prev);
+  };
 
   const handleEditToggle = () => setIsEditing((prev) => !prev);
 
@@ -68,6 +73,12 @@ function Profile() {
       toast.error("Failed to update notifications.");
     }
   };
+
+  const [userData, setUserData] = useState({
+    name: currentUser?.displayName,
+    email: currentUser?.email,
+    profilePicture: currentUser?.photoURL || profileImg,
+  });
 
   const handlePictureChange = (e) => {
     const file = e.target.files[0];
@@ -116,16 +127,35 @@ function Profile() {
 
   const handleSave = async () => {
     try {
+      const user = auth.currentUser;
+
       if (userData.name !== currentUser?.displayName) {
-        await updateProfile(currentUser, { displayName: userData.name });
-        await updateDoc(doc(db, "Users", currentUser?.uid), { name: userData.name });
+        await updateProfile(user, { displayName: userData.name });
+        await updateDoc(doc(db, "Users", user.uid), { name: userData.name });
       }
 
+      if (userData.email !== currentUser?.email) {
+        const password = window.prompt("Please confirm your password to change email:");
+
+        if (password) {
+          const credential = EmailAuthProvider.credential(currentUser.email, password);
+          await reauthenticateWithCredential(user, credential);
+
+          await user.updateEmail(userData.email);
+          await updateDoc(doc(db, "Users", user.uid), { email: userData.email });
+
+          toast.success("Email updated successfully!");
+        } else {
+          toast.info("Email change cancelled.");
+        }
+      }
+
+      await user.reload();
       setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("Failed to update profile.");
+      toast.error("Failed to update profile. " + error.message);
     }
   };
 
@@ -189,6 +219,14 @@ function Profile() {
                 placeholder="Name"
                 className="input-field"
               />
+              <input
+                type="email"
+                name="email"
+                value={userData.email}
+                onChange={handleInputChange}
+                placeholder="Email"
+                className="input-field"
+              />
               <button onClick={handleSave} className="save-button"><img src={save} alt="" />Save</button>
             </>
           ) : (
@@ -212,7 +250,6 @@ function Profile() {
         </ul>
       </div>
 
-      {/* Notification Settings */}
       <div className="sectional">
         <h2>Notification Settings</h2>
         <label>
@@ -224,6 +261,11 @@ function Profile() {
           <input type="checkbox" checked={notifications.push} onChange={() => handleNotificationChange("push")} />
           Enable Push Notifications
         </label>
+      </div>
+
+      {/* ✅ Dark mode toggle button */}
+      <div className="moder">
+        <button onClick={handleDarkModeToggle}>{darkMode ? 'Light Mode' : 'Dark Mode'}</button>
       </div>
 
       <div className="profile-actions">

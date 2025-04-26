@@ -7,6 +7,10 @@ import { BsMenuButtonWide } from "react-icons/bs";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../Context/Firebase";
 import admin from "../../Asset/admin.png";
+import { AiOutlineHome, AiOutlineInfoCircle } from "react-icons/ai";
+import { MdCreate, MdOutlineArticle } from "react-icons/md";
+import { FaUserShield, FaUserPlus, FaSignInAlt } from "react-icons/fa";
+
 
 function Header() {
     const { currentUser } = useUser();
@@ -59,7 +63,7 @@ function Header() {
         <div className="HomeHeader">
             <Link to="/">
                 <div className="logo">
-                    <b style={{ fontFamily: "fantasy", letterSpacing: "2px", fontSize: "30px", paddingTop: "10px" }}>
+                    <b style={{ fontFamily: "fantasy", letterSpacing: "2px", fontSize: "30px", paddingTop: "10px", color: "#000" }}>
                         DU
                     </b>
                     FEED
@@ -71,57 +75,64 @@ function Header() {
             </button>
 
             <ul className="headerNav" style={{ top: isActive ? '-650px' : '0px' }}>
-                <button onClick={handleToggle} className="respobutton">
-                    <BsMenuButtonWide />
-                </button>
+    <button onClick={handleToggle} className="respobutton">
+        <BsMenuButtonWide />
+    </button>
 
-                <li><NavLink to="/home"> Home</NavLink></li>
-                <li><NavLink to="/about">About</NavLink></li>
-                {isLoggedIn && <li><NavLink to="/create">Create</NavLink></li>}
-                {isLoggedIn && <li><NavLink to="/blogs">My Blogs</NavLink></li>}
-                
-                {/* ✅ Show "Admin Page" for both Admins & Sub Admins */}
-                {!isLoading && (isAdmin || isSubAdmin) && (
-                    <li><NavLink to="/admin">Admin Page</NavLink></li>
-                )}
+    <li><NavLink to="/home"><AiOutlineHome style={{ marginRight: "5px" }} /> Dashboard</NavLink></li>
+    <li><NavLink to="/about"><AiOutlineInfoCircle style={{ marginRight: "5px" }} /> About</NavLink></li>
+    
+    {isLoggedIn && (
+        <li><NavLink to="/create"><MdCreate style={{ marginRight: "5px" }} /> Create</NavLink></li>
+    )}
+    
+    {isLoggedIn && (
+        <li><NavLink to="/blogs"><MdOutlineArticle style={{ marginRight: "5px" }} /> My Blogs</NavLink></li>
+    )}
 
-                {/* ✅ Show "Create Sub Admin" button only for full Admins */}
-                {!isLoading && isAdmin && (
-                    <button className="create-admin-btn" onClick={() => navigate("/createadmin")}>
-                        <img src={admin} alt="" />
-                    </button>
-                )}
+    {!isLoading && (isAdmin || isSubAdmin) && (
+        <li><NavLink to="/admin"><FaUserShield style={{ marginRight: "5px" }} /> Admin Page</NavLink></li>
+    )}
 
-                <li
-                    style={{
-                        background: isLoggedIn ? "transparent" : "#507bda",
-                        color: isLoggedIn ? "#507bda" : "#fff",
-                        borderRadius: "10px",
-                        width: "100px",
-                        height: "40px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer"
-                    }}
-                >
-                    <NavLink to={isLoggedIn ? "/profile" : "/login"}>
-                        {isLoggedIn ? (
-                            <div className="major" style={{ marginRight: "-100px" }}>
-                                <div className="profile-pic">
-                                    <img
-                                        src={currentUser?.photoURL || ProfileImage}
-                                        alt="User Profile"
-                                        className="profile-image"
-                                    />
-                                </div>
-                            </div>
-                        ) : (
-                            "Login"
-                        )}
-                    </NavLink>
-                </li>
-            </ul>
+    {!isLoading && isAdmin && (
+        <button className="create-admin-btn" onClick={() => navigate("/createadmin")}>
+            <FaUserPlus style={{ marginRight: "5px" }} />
+            <img src={admin} alt="" />
+        </button>
+    )}
+
+    <li style={{
+        background: isLoggedIn ? "transparent" : "#507bda",
+        color: isLoggedIn ? "#507bda" : "#fff",
+        borderRadius: "10px",
+        width: "100px",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer"
+    }}>
+        <NavLink to={isLoggedIn ? "/profile" : "/login"}>
+            {isLoggedIn ? (
+                <div className="major" style={{ marginRight: "-100px" }}>
+                    <div className="profile-pic">
+                        <img
+                            src={currentUser?.photoURL || ProfileImage}
+                            alt="User Profile"
+                            className="profile-image"
+                        />
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <FaSignInAlt style={{ marginRight: "5px" }} />
+                    Login
+                </>
+            )}
+        </NavLink>
+    </li>
+</ul>
+
         </div>
     );
 }

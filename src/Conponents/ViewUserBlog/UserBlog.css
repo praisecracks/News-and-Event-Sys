@@ -253,7 +253,7 @@ width: 100%;
   }
   .delete-comment-btn{
     align-items: center;
-    background-color: #fe8e8e;
+    background-color: transparent;
     display: flex;
     justify-content: center;
     position: relative;

@@ -1,7 +1,9 @@
+
 *{
     padding: 0%;
     margin: 0%;
     box-sizing: border-box;
+
 }
 .AboutHeader{
     background-color: #363636;
@@ -82,7 +84,12 @@ p{
     justify-content: center;
     align-items: center;
     display: flex;
-}
+    background: linear-gradient(to right, #0763bee1, #d1cecef8), url("../../Asset/Book study.jpg");
+    background-size: cover;
+    background-position: center;    
+    color: #fff;
+    padding-bottom: 20px;
+    }
 .mission{
     margin-top: 50px;
     width: 80%;
@@ -134,7 +141,7 @@ p{
 }
 @media (max-width: 600px) {
     .load{
-        width: 80%;
+        width: 85%;
         /* background-color: #444; */
     }
 }
@@ -150,7 +157,8 @@ p{
 }
 
 .carrier .carr{
-    width: 80%;
+    width: 85%;
+    /* background-color: red; */
 }
 @media (min-width :768px) {
     .carrier .carr{
@@ -159,11 +167,11 @@ p{
 }
 .team{
     /* height: 90vh; */
-    margin-top: 150px;
+    margin-top: 100px;
     display: flex;
     width: 100%;
     align-items: center;
-    /* background-color: aqua; */
+    background-color: rgb(62, 152, 231);
     justify-content: center;
 } 
 .team-body{
@@ -179,6 +187,12 @@ p{
 }
 .team .team-heading h2, p{
     text-align: center;
+}
+@media (max-width: 600px) {
+    .team{
+        width: 100%;
+        /* background-color: #444; */
+    }
 }
 .image-container{
     width: 100%;
@@ -204,6 +218,7 @@ p{
     height: 100%;
     /* background-color: red; */
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
@@ -221,3 +236,4 @@ p{
     margin-top: 5px;
     color: #363636;
 }
+

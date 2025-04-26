@@ -5,41 +5,43 @@ import './About.css'
 function Mission() {
   return (
     <div className='Mission-body'>
-      <div className="flow">
-
+    <div className="flow">
       <div className="mission">
         <div className="logo" style={{textAlign: "center", fontSize: "30px", marginBottom: "40px"}}>
-                        <b style={{fontFamily: "fantasy", letterSpacing: "2px", fontSize: "50px", paddingTop: "10px"}}>DU</b>FEED
-                    </div>
-      <h1>Mission</h1>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, corporis? Esse deserunt, sint amet maiores sequi doloremque ex exercitationem,
-         omnis laboriosam enim ratione iste a eaque velit molestias beatae culpa?
-         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium quibusdam optio ab sit aliquid, autem voluptatum nulla doloremque facere ex!</p>
+          <b style={{fontFamily: "fantasy", letterSpacing: "2px", fontSize: "50px", paddingTop: "10px"}}>DU</b>FEED
+        </div>
+        <h1>Our Mission</h1>
+        <p>
+          At DUFEED, our mission is to empower students and staff with a reliable platform 
+          to share, discover, and stay updated on important news and events happening across 
+          Dominion University. We aim to foster transparency, communication, and engagement within the academic community.
+        </p>
       </div>
-      </div>
-
-<div className="mid">
-
+    </div>
+  
+    <div className="mid">
       <div className="load">
-        <h2>Vision</h2>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias nemo voluptatibus modi inventore, obcaecati vero earum 
-        repudiandae aut illum recusandae unde cupiditate natus repellendus expedita itaque.
-         Accusantium repellendus unde quia, debitis nihil ipsam natus sit, ea quibusdam vol
-         uptatum dignissimos corrupti!</p>
+        <h2>Our Vision</h2>
+        <p>
+          We envision a vibrant digital space where every voice in the university is heard, 
+          every story is told, and important events are easily accessible. 
+          DUFEED strives to become the go-to platform for real-time campus reporting and information dissemination.
+        </p>
       </div>
-
+  
       <div className="values">
         <h2>Our Core Values</h2>
         <ul>
-          <li>Behavour stands</li>
-          <li>Behavour standard</li>
-          <li>Mission Growth</li>
-          <li>Believers Love World</li>
-
+          <li>Transparency</li>
+          <li>Credibility</li>
+          <li>Student Engagement</li>
+          <li>Integrity in Reporting</li>
+          <li>Digital Innovation</li>
         </ul>
       </div>
-</div>
     </div>
+  </div>
+  
   )
 }
 
