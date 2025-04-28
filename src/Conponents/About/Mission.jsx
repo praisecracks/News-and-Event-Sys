@@ -10,8 +10,8 @@ function Mission() {
         <div className="logo" style={{textAlign: "center", fontSize: "30px", marginBottom: "40px"}}>
           <b style={{fontFamily: "fantasy", letterSpacing: "2px", fontSize: "50px", paddingTop: "10px"}}>DU</b>FEED
         </div>
-        <h1>Our Mission</h1>
-        <p>
+        <h1 style={{color: "#fff"}}>Our Mission</h1>
+        <p style={{color: "#fff"}}>
           At DUFEED, our mission is to empower students and staff with a reliable platform 
           to share, discover, and stay updated on important news and events happening across 
           Dominion University. We aim to foster transparency, communication, and engagement within the academic community.

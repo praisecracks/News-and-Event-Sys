@@ -43,7 +43,7 @@ function ReportContainer() {
                                         <img className="report-imgg" src={data.image} alt="" />
                                     ) : (
                                         <div className="news-only">
-                                            <h1 style={{ textAlign: "center" }}>News...</h1>
+                                            <h1 style={{ textAlign: "center" }}>DU Local News</h1>
                                             <p>Image isn't available for this news.</p>
                                         </div>
                                     )}

@@ -6,8 +6,8 @@ function Team() {
     <div>
       <div className="team">
         <div className="team-heading">
-          <h2>Meet the Team</h2>
-          <p>
+          <h2 style={{color: "#fff"}}>Meet the Team</h2>
+          <p style={{color: "#fff"}}>
             Behind every update, event post, and piece of breaking news on DUFEED 
             is a dedicated team of developers, content managers, and moderators. 
             Together, we ensure the platform runs smoothly and serves the Dominion University community with excellence.

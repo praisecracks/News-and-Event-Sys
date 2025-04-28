@@ -25,7 +25,7 @@ button{
     align-items: center;
     height: fit-content;
     width: 270px;
-    /* height: 410px; */
+    height: 410px;
     padding: 20px 10px;
     border: 1px solid #e6e5e5;
     background-color: #fcfeff;
@@ -94,10 +94,9 @@ button{
     align-items: center;
     display: flex;
     /* background-color: #02085e; */
-    /* height: 100%; */
     width: 100%;
     padding: 10px;
-    bottom: auto;
+    bottom: 0%;
 }
 .report .review .like{
     font-size: 12px;
