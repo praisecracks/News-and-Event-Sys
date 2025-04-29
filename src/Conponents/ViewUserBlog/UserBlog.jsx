@@ -3,11 +3,11 @@ import "./userBlog.css";
 import like from '../../Asset/userLike.png';
 import Header from "../../Containers/Header/Header";
 import { useParams } from "react-router";
-import { collection, onSnapshot, query, addDoc, serverTimestamp, orderBy, deleteDoc, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, query, addDoc, serverTimestamp, orderBy, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../Context/Firebase";
 import useLikePost from "../../Hooks/HandleLike";
 import { useUser } from "../../Context/UserContext";
-import { p } from "framer-motion/client";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 function UserBlog() {
   const params = useParams();
@@ -16,6 +16,11 @@ function UserBlog() {
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editingMessageText, setEditingMessageText] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isSubAdmin, setIsSubAdmin] = useState(false);  // New state for sub-admin
+  const [isCommentsDisabled, setIsCommentsDisabled] = useState(false); // State for comment section toggle
 
   const getAnonymousId = () => {
     const storedId = localStorage.getItem("anonymousId");
@@ -72,6 +77,25 @@ function UserBlog() {
     return () => unsub();
   }, [id]);
 
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (currentUser) {
+        const userRef = doc(db, "Users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          if (userData.isAdmin) {
+            setIsAdmin(true);
+          }
+          if (userData.isSubAdmin) {
+            setIsSubAdmin(true);  // Check for SubAdmin
+          }
+        }
+      }
+    };
+    checkAdminStatus();
+  }, [currentUser]);
+
   const anonymousUsers = {};
 
   const fetchUserRole = async (userId) => {
@@ -83,9 +107,10 @@ function UserBlog() {
       const userDoc = await getDoc(userRef);
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        // Display Admin name for both Admin and SubAdmin
         if (userData.isAdmin || userData.isSubAdmin) {
-          return "Admin";
-        } 
+          return "Admin";  // Treat both Admin and SubAdmin as Admin
+        }
         if (!anonymousUsers[userId]) {
           anonymousUsers[userId] = Math.floor(1000 + Math.random() * 9000);
         }
@@ -113,10 +138,15 @@ function UserBlog() {
       return;
     }
 
+    if (editingMessageId) {
+      await handleUpdateMessage();
+      return;
+    }
+
     const commentsRef = collection(db, "Blogs", id, "Comments");
     const q = query(commentsRef);
     const snapshot = await getDocs(q);
-    
+
     const userComments = snapshot.docs.filter(doc => doc.data().senderId === (currentUser?.uid || anonymousId));
 
     if (userComments.length >= 5) {
@@ -136,6 +166,32 @@ function UserBlog() {
         console.error("Error posting comment: ", error);
       }
     }
+  };
+
+  const handleUpdateMessage = async () => {
+    if (!editingMessageId) return;
+
+    const commentRef = doc(db, "Blogs", id, "Comments", editingMessageId);
+    try {
+      await updateDoc(commentRef, {
+        text: editingMessageText,
+      });
+      setEditingMessageId(null);
+      setEditingMessageText("");
+      alert("Comment updated successfully.");
+    } catch (error) {
+      console.error("Error updating comment: ", error);
+    }
+  };
+
+  const startEditingMessage = (msg) => {
+    setEditingMessageId(msg.id);
+    setEditingMessageText(msg.text);
+  };
+
+  const cancelEditing = () => {
+    setEditingMessageId(null);
+    setEditingMessageText("");
   };
 
   const handleLike = () => {
@@ -160,14 +216,8 @@ function UserBlog() {
       return;
     }
 
-    const userRef = doc(db, "Users", currentUser.uid);
-    const userSnap = await getDoc(userRef);
-    const userData = userSnap.exists() ? userSnap.data() : {};
-
-    const isAdminOrSubAdmin = userData.isAdmin || userData.isSubAdmin;
-    const isCommentOwner = senderId === currentUser.uid;
-
-    if (isAdminOrSubAdmin || isCommentOwner) {
+    // Allow deleting if user is Admin/SubAdmin or the comment sender
+    if (isAdmin || isSubAdmin || senderId === currentUser?.uid) {
       try {
         await deleteDoc(doc(db, "Blogs", id, "Comments", commentId));
         alert("Comment deleted successfully.");
@@ -175,8 +225,13 @@ function UserBlog() {
         console.error("Error deleting comment: ", error);
       }
     } else {
-      alert("You can only delete your own comments.");
+      alert("You are not authorized to delete this comment.");
     }
+  };
+
+  // Toggle the comment section visibility (only accessible by Admin/SubAdmin)
+  const handleCommentToggle = () => {
+    setIsCommentsDisabled((prevState) => !prevState);
   };
 
   return (
@@ -184,13 +239,13 @@ function UserBlog() {
       <Header />
       <div className="mid">
         <div className="userBlog-container">
-          <div className="blogs-list" >
+          <div className="blogs-list">
             {data && (
               <div key={data.id} className="blog-card">
                 {data.image && <img src={data.image} alt="" />}
                 <h2>{data.title}</h2>
                 <p>{date?.toLocaleString()}</p>
-                <p className="blog-text">{data.desc}</p>
+                <p className="blog-text" dangerouslySetInnerHTML={{ __html: data.desc }}></p>
                 <div className="actions">
                   <button onClick={handleLike} disabled={loading || likes?.includes(currentUser.uid)}>
                     {likes?.includes(currentUser.uid) ? "Liked" : "Like"} ({likes?.length || 0})
@@ -203,36 +258,69 @@ function UserBlog() {
                   <button onClick={() => setShowChat(!showChat)}>
                     {showChat ? "Close Comments" : "Open Comment Section"}
                   </button>
+
+                  {/* Show the toggle button for Admin/SubAdmin only */}
+                  {(isAdmin || isSubAdmin) && (
+                    <button onClick={handleCommentToggle}>
+                      {isCommentsDisabled ? "Enable Comments" : "Disable Comments"}
+                    </button>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
-          {showChat && (
-  <div className="chat-container">
-    <div className="chat-box">
-      {messages.length > 0 ? (
-        messages.map((msg) => (
-          <div key={msg.id} className="message">
-            <strong>{msg.displayName}</strong>: {msg.text}
-            <br />
-            <small style={{color:"#777"}}>{msg.timestamp?.toDate().toLocaleString()}</small>
-            <div className="blog-delete-btn">
-            <button className="delete-comment-btn" onClick={() => handleDeleteComment(msg.id, msg.senderId)}>🗑️</button>
-            </div>
-          </div>
-        ))
-      ) : (
-        <p className="no-comments">Be the first to make comment!</p>
-      )}
-    </div>
-    <div className="chat-input">
-      <textarea maxLength={100} placeholder="Type a comment..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-      <button onClick={handleSendMessage}>Send</button>
-    </div>
-  </div>
-)}
+          {showChat && !isCommentsDisabled && (
+            <div className="chat-container">
+              <div className="chat-box">
+                {messages.length > 0 ? (
+                  messages.map((msg) => (
+                    <div key={msg.id} className="message">
+                      <strong>{msg.displayName}</strong>: {msg.text}
+                      <br />
+                      <small style={{ color: "#777" }}>{msg.timestamp?.toDate().toLocaleString()}</small>
+                      <div className="blog-delete-btn">
+                        {(isAdmin || isSubAdmin || msg.senderId === currentUser?.uid) && (
+                          <>
+                            <button className="edit-comment-btn" onClick={() => startEditingMessage(msg)}>
+                              <FaEdit />
+                            </button>
+                            <button className="delete-comment-btn" onClick={() => handleDeleteComment(msg.id, msg.senderId)}>
+                              <FaTrash />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-comments">Be the first to make a comment!</p>
+                )}
+              </div>
 
+              <div className="chat-input">
+                {editingMessageId ? (
+                  <div>
+                    <textarea
+                      value={editingMessageText}
+                      onChange={(e) => setEditingMessageText(e.target.value)}
+                    />
+                    <button onClick={handleUpdateMessage}>Save</button>
+                    <button onClick={cancelEditing}>Cancel</button>
+                  </div>
+                ) : (
+                  <div className="summit-comment">
+                    <textarea
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Write a comment..."
+                    />
+                    <button onClick={handleSendMessage}>Send</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

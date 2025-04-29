@@ -85,17 +85,19 @@ function MyBlogs() {
         <div className="blogs-list">
           {filteredBlogs && filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog) => (
-              <div key={blog.id} className="blog-card">
-                {blog.image && <div className="image-connect"><img src={blog.image} alt="" /></div>}
-                <h2>{blog.title}</h2>
-                <p>{blog.date instanceof Timestamp ? blog.date.toDate().toLocaleString() : "No Date Available"}</p>
-                <p className="blog-text">{blog.desc}</p>
-
-                <div className="actions">
-                  <button onClick={() => navigate(`/edit/${blog.id}`)}>Edit <img src={edit} alt="" /></button>
-                  <button onClick={() => handleDelete(blog.id)}>Delete <img src={del} alt="" /></button>
-                </div>
+              <div className="blog-card">
+              {blog.image && <div className="image-connect"><img src={blog.image} alt="" /></div>}
+              <h2>{blog.title}</h2>
+              <p>{blog.date instanceof Timestamp ? blog.date.toDate().toLocaleString() : "No Date Available"}</p>
+              {/* Render blog description as HTML */}
+              <p className="blog-text" dangerouslySetInnerHTML={{ __html: blog.desc }}></p>
+            
+              <div className="actions">
+                <button onClick={() => navigate(`/edit/${blog.id}`)}><img src={edit} alt="" />Edit</button>
+                <button onClick={() => handleDelete(blog.id)}> <img src={del} alt="" />Delete</button>
               </div>
+            </div>
+            
             ))
           ) : (
             <p className="no-blogs">{isLoading ? "Loading...." : "No blogs found."}</p>

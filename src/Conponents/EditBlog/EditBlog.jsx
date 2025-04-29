@@ -6,12 +6,14 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../../Context/Firebase";
 import backImg from "../../Asset/arrow_back.svg";
 import blog from "../../Asset/Book study.jpg";
+import ReactQuill from "react-quill"; // Import Quill
+import "react-quill/dist/quill.snow.css"; // Import Quill CSS for the snow theme
 
 function Edit() {
   const [userData, setUserData] = useState({});
-  const [imageFile, setImageFile] = useState(null); // Track selected image file
-  const [isSaving, setIsSaving] = useState(false); // Track saving status
-  const { id } = useParams(); // Get blog ID from URL params
+  const [imageFile, setImageFile] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,42 +33,39 @@ function Edit() {
   const handlePictureChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file); // Store the selected image file for upload
+      setImageFile(file);
       const reader = new FileReader();
       reader.onload = () => {
-        setUserData((prev) => ({ ...prev, image: reader.result })); // Temporary image preview
+        setUserData((prev) => ({ ...prev, image: reader.result }));
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSaveChanges = async () => {
-    setIsSaving(true); // Show "Saving Content..." in the button
+    setIsSaving(true);
 
     try {
       const docRef = doc(db, "Blogs", id);
 
       if (imageFile) {
-        // Upload new image to Firebase Storage
         const storage = getStorage();
         const storageRef = ref(storage, `blog-images/${id}`);
         await uploadBytes(storageRef, imageFile);
         const imageUrl = await getDownloadURL(storageRef);
 
-        // Save updated blog data, including new image URL
         await updateDoc(docRef, { ...userData, image: imageUrl });
       } else {
-        // Save text-only updates if no new image is selected
         await updateDoc(docRef, userData);
       }
 
       alert("Changes saved successfully!");
-      navigate(-1); // Go back after saving
+      navigate(-1);
     } catch (error) {
       console.error("Error saving changes:", error);
       alert("Failed to save changes.");
     } finally {
-      setIsSaving(false); // Reset button state after saving
+      setIsSaving(false);
     }
   };
 
@@ -91,7 +90,7 @@ function Edit() {
               onChange={handlePictureChange}
               style={{ display: "none" }}
             />
-            <button style={{ outline: "none", cursor: "pointer", color: "White" }}>
+            <button style={{ outline: "none", cursor: "pointer", color: "White", backgroundColor: "#0077cc"}}>
               <label htmlFor="file">Change Image</label>
             </button>
           </div>
@@ -105,9 +104,17 @@ function Edit() {
                 onChange={(e) => setUserData((prev) => ({ ...prev, title: e.target.value }))}
               />
               <h2>Edit Text</h2>
-              <textarea
+              <ReactQuill
                 value={userData.desc || ""}
-                onChange={(e) => setUserData((prev) => ({ ...prev, desc: e.target.value }))}
+                onChange={(content) => setUserData((prev) => ({ ...prev, desc: content }))}
+                theme="snow"
+                modules={{
+                  toolbar: [
+                    ['bold', 'italic', 'underline', 'link'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['image'],
+                  ],
+                }}
               />
             </div>
           </div>

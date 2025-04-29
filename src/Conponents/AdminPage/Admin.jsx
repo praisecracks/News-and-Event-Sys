@@ -5,10 +5,22 @@ import { collection, doc, onSnapshot, updateDoc, deleteDoc, getDoc } from "fireb
 import { toast } from "react-toastify";
 import { db } from "../../Context/Firebase";
 import { useUser } from "../../Context/UserContext";
-import admin from "../../Asset/admin.png";
-import { FaBackward } from "react-icons/fa";
+import { FaBackward, FaUserAlt, FaCog, FaTrash, FaCheck, FaTimes } from "react-icons/fa"; // Import React Icons
+// import { serverTimestamp } from "firebase/firestore";
+import { addDoc } from "firebase/firestore";
+
+
+// await addDoc(collection(db, "Blogs"), {
+//   title: title,
+//   desc: description,
+//   image: imageUrl,
+//   isVerified: false,
+//   timestamp: serverTimestamp(), // ✅ Adds a reliable Firestore server time
+// });
+
 
 function Admin() {
+  const [searchQuery, setSearchQuery] = useState('');
   const { currentUser } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [isRoleLoading, setIsRoleLoading] = useState(true);
@@ -17,6 +29,7 @@ function Admin() {
   const [draggedPost, setDraggedPost] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSubAdmin, setIsSubAdmin] = useState(false);
+  const [viewPosts, setViewPosts] = useState("approved");  // Default to show approved posts
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,12 +39,21 @@ function Admin() {
         ...doc.data(),
         id: doc.id,
       }));
-      setData(StreamArray);
+  
+      // Sort by timestamp descending
+      const sortedArray = StreamArray.sort((a, b) => {
+        const timeA = a.timestamp ? a.timestamp.toMillis?.() || new Date(a.timestamp).getTime() : 0;
+        const timeB = b.timestamp ? b.timestamp.toMillis?.() || new Date(b.timestamp).getTime() : 0;
+        return timeB - timeA;
+      });
+  
+      setData(sortedArray);
       setIsLoading(false);
     });
-
+  
     return () => unsub();
   }, []);
+  
 
   const fetchUserRole = useCallback(async () => {
     if (!currentUser) {
@@ -83,97 +105,173 @@ function Admin() {
       }
     }
   };
-//return interface
+
+  const handleDragStart = (post) => {
+    setDraggedPost(post);
+  };
+
+  const handleDrop = () => {
+    if (draggedPost) {
+      handleDeletePost(draggedPost.id);
+      setDraggedPost(null);
+    }
+  };
+
   return (
     <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
-      <nav>
-        <ul>
-          <li>
-            <button className="back-btn" onClick={() => navigate("/home")}>
-              <FaBackward /> Back
-            </button>
-          </li>
-          {!isRoleLoading && isAdmin && (
+      <div className="sidebar">
+        {currentUser && (
+          <div className="profile-info">
+            <img src={currentUser.photoURL || "/default-profile.png"} alt="Profile" className="profile-pic" />
+            <div className="user-info">
+              <h3 style={{color: "#fff"}}>{currentUser.displayName || "Admin"}</h3>
+              <p style={{color: "#eee"}}>{currentUser.email}</p>
+            </div>
+          </div>
+        )}
+
+        <nav className="sidebar-nav">
+          <ul>
             <li>
-              <button className="create-admin-btn" onClick={() => navigate("/createadmin")}>
-                <img className="admin-icon" src={admin} alt="Admin" /> Create Sub Admin
+              <button className="back-btn" onClick={() => navigate("/home")}>
+                <FaBackward size={20} /> Back
               </button>
             </li>
-          )}
-        </ul>
-      </nav>
+            {!isRoleLoading && isAdmin && (
+              <li>
+                <button className="create-admin-btn" onClick={() => navigate("/createadmin")}>
+                  <FaUserAlt size={20} /> Create Sub Admin
+                </button>
+              </li>
+            )}
+            <li>
+              <button onClick={() => navigate("/dashboard")}>
+                <FaCog size={20} /> Dashboard
+              </button>
+            </li>
+            <li>
+              <button onClick={() => navigate("/settings")}>
+                <FaCog size={20} /> Settings
+              </button>
+            </li>
+            <li>
+              <button  onClick={() => setViewPosts("approved")}>Approve Post</button>
+            </li>
+            <li>
+              <button onClick={() => setViewPosts("disapproved")}>Pending / Disapprove Post</button>
+            </li>
 
-      {isLoading ? (
-        <div className="loading-spinner">Loading...</div>
-      ) : (
-        <div className="dashboard-container">
-          <div className="approved-section">
-            <h2>Approved Posts</h2>
-            <div className="posts-grid">
-              {Data.filter((post) => post.isVerified).length > 0 ? (
-                Data.filter((post) => post.isVerified).map((post) => (
-                  <div key={post.id} className="post-card" draggable onDragStart={() => setDraggedPost(post)}>
-                    <div>
-                      <img src={post.image} alt={post.title} />
-                      <h3>{post.title}</h3>
-                    </div>
-                    <div className="Approved-btn" style={{ display: "grid" }}>
-                      <button onClick={() => setSelectedPost(post)}>View Content</button>
-                      <button onClick={() => handleApprove(post.id, "disapprove")}>Disapprove</button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No approved posts yet.</p>
-              )}
-            </div>
-          </div>
-
-          <div className="disapproved-section">
-            <h2>Pending/Disapproved Posts</h2>
-            <div className="posts-grid">
-              {Data.filter((post) => !post.isVerified).length > 0 ? (
-                Data.filter((post) => !post.isVerified).map((post) => (
-                  <div key={post.id} className="post-card" draggable onDragStart={() => setDraggedPost(post)}>
-                    <img src={post.image} alt={post.title} />
-                    <h3>{post.title}</h3>
-                    <div className="screen-content" style={{ display: "grid" }}>
-                      <button onClick={() => setSelectedPost(post)}>View Content</button>
-                      <button onClick={() => handleApprove(post.id, "approve")}>Approve</button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No disapproved posts.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="recycle-bin" onDragOver={(e) => e.preventDefault()} onDrop={() => handleDeletePost(draggedPost?.id)}>
-        <h3>Recycle Bin</h3>
-        <p>Drag posts here to delete them.</p>
+            {/* Recycle Bin Button */}
+            <li>
+              <div
+                className="recycle-bin-sidebar"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+              >
+                <FaTrash size={20} /> Recycle Bin
+              </div>
+            </li>
+          </ul>
+        </nav>
       </div>
 
-      <div className={`post-details ${selectedPost ? "visible" : ""}`}>
-        {selectedPost ? (
-          <div className="details-card">
-            <h2>Post Details</h2>
-            <img src={selectedPost.image} alt={selectedPost.title} className="details-image" />
-            <h2 style={{color: "#000"}}>{selectedPost.title}</h2>
-            <p>{selectedPost.desc}</p>
-            <div className="post-details-btn">
-            <button style={{background: "#02b717", color: "#fff"}} onClick={() => handleApprove(selectedPost.id, "approve")}>Approve</button>
-            <button style={{ marginLeft: "10px", marginTop: "10px" }} onClick={() => handleApprove(selectedPost.id, "disapprove")}>
-              Disapprove
+      <div className="dashboard-content">
+  <h1>Admin Dashboard</h1>
+
+  <input 
+    className="search-bar-admin"
+    type="text" 
+    value={searchQuery} 
+    onChange={(e) => setSearchQuery(e.target.value)} 
+    placeholder="Search..." 
+  />
+
+  {isLoading ? (
+    <div className="loading-spinner">Loading...</div>
+  ) : (
+    <div className="posts-section">
+      <div className={`${viewPosts === "approved" ? "approved-section" : "disapproved-section"}`}>
+        <h2>{viewPosts === "approved" ? "Approved Posts" : "Pending/Disapproved Posts"}</h2>
+        <div className="posts-grid">
+          {Data.filter((post) => (viewPosts === "approved" ? post.isVerified : !post.isVerified))
+            .filter((post) => 
+              post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+              post.desc.toLowerCase().includes(searchQuery.toLowerCase())
+            ).length > 0 ? (
+              Data.filter((post) => (viewPosts === "approved" ? post.isVerified : !post.isVerified))
+                .filter((post) => 
+                  post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                  post.desc.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map((post) => (
+                  <div key={post.id} className="post-card" draggable onDragStart={() => handleDragStart(post)}>
+                    <h3>{post.title}</h3>
+                    {post.image && (
+                      <img 
+                        src={post.image} 
+                        alt="Post Image" 
+                        style={{ width: "60%", height: "50px", objectFit: "cover", borderRadius: "8px", marginBottom: "10px" }}
+                      />
+                    )}
+                    <div className={viewPosts === "approved" ? "Approved-btn" : "screen-content"}>
+                      <button onClick={() => setSelectedPost(post)} className="approved">View Content</button>
+                      <button className="gggg" onClick={() => handleApprove(post.id, viewPosts === "approved" ? "disapprove" : "approve")}>
+                        {viewPosts === "approved" ? <FaTimes size={18} /> : <FaCheck size={18} />}
+                        {viewPosts === "approved" ? "Disapprove" : "Approve"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+          ) : (
+            <p>No posts available.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  )}
+
+
+
+        {selectedPost && (
+        <div className="post-details">
+        <div className="details-card">
+          <h2>Post Details</h2>
+          
+          <h3>{selectedPost.title}</h3>
+      
+          {/* NEW: Display Image if exists */}
+          {selectedPost.image && (
+            <img 
+              src={selectedPost.image} 
+              alt="Post Image" 
+              style={{ width: "100%", height: "300px", objectFit: "cover", borderRadius: "8px", marginBottom: "15px" }}
+            />
+          )}
+      
+          {/* Scrollable content section */}
+          <div className="post-content" dangerouslySetInnerHTML={{
+            __html: selectedPost.desc.replace(/<img[^>]*>/g, (imgTag) => {
+              return imgTag.replace(
+                /src="([^"]+)"/,
+                (match, p1) => `src="${p1}" style="max-width: 100%; height: auto; display: block; margin: 10px 0;"`
+              );
+            })
+          }} />
+      
+          <div className="post-details-btn">
+            <button className="approved" onClick={() => handleApprove(selectedPost.id, "approve")}>
+              <FaCheck size={18} /> Approve
             </button>
-            <button onClick={() => setSelectedPost(null)}>Close</button>
-            </div>
+            <button onClick={() => handleApprove(selectedPost.id, "disapprove")}>
+              <FaTimes size={18} /> Disapprove
+            </button>
+            <button onClick={() => setSelectedPost(null)}>
+              <FaTimes size={18} /> Close
+            </button>
           </div>
-        ) : (
-          <p>Select a post to view details.</p>
+        </div>
+      </div>
+      
         )}
       </div>
     </div>

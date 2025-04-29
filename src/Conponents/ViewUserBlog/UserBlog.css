@@ -270,3 +270,23 @@ width: 100%;
     align-items: center;
     justify-content: flex-end;
   }
+  .edit-comment-btn{
+    background: transparent;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
+  .summit-comment{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    /* background-color: red; */
+    width: 100%;
+    overflow: hidden;
+  }
+  .summit-comment textarea{
+    width: 100%;
+
+  }

@@ -1,353 +1,373 @@
-/* Updated Admin.css */
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
+/* General Styling */
 .admin-dashboard {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-}
-
-.dashboard-container {
   display: flex;
-  gap: 20px;
-  margin-top: 80px;
-  /* background-color: red; */
+  min-height: 100vh;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background-color: #eef2f7;
+  overflow: hidden;
 }
 
-@media (max-width: 768px) {
-  .dashboard-container {
-    display: grid;
-  }
-}
-.approved-section, .disapproved-section:nth-child(2) {
-  flex: 1;
-  gap: 20px;
-  max-height: 500px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color:transparent transparent;
-}
-
-
-
-/* Custom scrollbar */
-.approved-section::-webkit-scrollbar, .disapproved-section::-webkit-scrollbar {
-  width: 8px;
-}
-
-.approved-section::-webkit-scrollbar-thumb, .disapproved-section::-webkit-scrollbar-thumb {
-  background-color: #8e9cca;
-  border-radius: 4px;
-}
-
-.posts-grid {
+/* Sidebar */
+.sidebar {
+  width: 270px;
+  background: linear-gradient(135deg, #534aec, #3b82f6);
+  color: #fff;
+  padding: 25px 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.post-card {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #8563061e;
-  width: 100%;
-  max-width: 350px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.post-card:hover {
-  transform: scale(1.03);
-}
-
-.post-card img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.post-card h3 {
-  flex: 1;
-  font-size: 16px;
-}
-
-.post-card button {
-  padding: 5px 12px;
-  font-size: 12px;
-  border-radius: 5px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  text-wrap: nowrap;
-}
-
-.approve-button {
-  background-color: #28a745;
-}
-
-.reject-button {
-  background-color: #dc3545;
-}
-
-.post-details {
-  position: fixed;
-  top: 100px;
-  right: 20px;
-  width: 300px;
-  height: 400px;
   overflow-y: auto;
-  padding: 10px;
-  border: 1px solid #ddd;
-  /* background-color: red; */
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 40px rgb(14, 14, 14);
 }
 
-
-.details-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-
-.action-buttons {
+.profile-info {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-/* Updated Navigation Bar Buttons */
-nav ul {
-  display: flex;
-  gap: 15px;
-  list-style-type: none;
-}
-
-nav ul li a {
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  padding: 10px 20px;
-  background: linear-gradient(90deg, #6a11cb, #2575fc);
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  font-size: 14px;
-  transition:  0.5s;
+  margin-bottom: 40px;
 }
 
-nav ul li a:hover {
-  background: linear-gradient(90deg, #4c00a8, #0056d9);
-}
-
-nav ul li a img {
-  width: 20px;
-  margin-right: 8px;
-}
-
-.header {
-  background-color: rgb(209, 226, 243);
-  width: 100%;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-}
-
-.header .logo {
-  display: flex;
-  align-items: center;
-}
-
-.header .logo img {
-  width: 100px;
+.profile-pic {
+  width: 80px;
   height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  margin-bottom: 10px;
 }
 
-.home-list {
-  padding: 7px 20px;
-  background: linear-gradient(#507bda, #adc5f7);
-  display: flex;
-  border: none;
-  align-items: center;
-  border-radius: 20px;
+.user-info h3 {
+  margin: 8px 0 4px;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-.home-list img {
-  width: 25px;
-  border-radius: 40%;
+.user-info p {
+  font-size: 14px;
+  opacity: 0.8;
 }
 
-@media (max-width: 768px) {
-  .home-list {
-    display: none;
-  }
-}
-
-.search-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f9610f;
+nav {
   width: 100%;
-  height: 90px;
-  margin-top: 100px;
-  position: fixed;
-  z-index: 1000;
 }
 
-.search-header h2 {
-  margin-left: 20px;
-  font-weight: 400;
-  font-family: sans-serif;
+nav ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
 }
 
-.search-header .search-bar input {
-  width: 300px;
-  height: 40px;
-  border-radius: 20px;
-}
-
-@media (max-width: 480px) {
-  .search-header .search-bar input {
-    width: 250px;
-  }
-}
-
-
-/* Delete Button Styling */
-.delete-btn {
-  background-color: #e74c3c;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.delete-btn:hover {
-  background-color: #c0392b;
-  transform: scale(1.05);
-}
-
-/* Warning Popup Styling */
-.delete-warning-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 30px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  text-align: center;
-}
-
-.delete-warning-popup h3 {
-  color: #e74c3c;
-  margin-bottom: 15px;
-}
-
-.delete-warning-popup p {
-  color: #333;
+nav ul li {
   margin-bottom: 20px;
 }
 
-.popup-buttons {
+nav button {
   display: flex;
-  justify-content: space-around;
-}
-
-.popup-buttons button {
-  padding: 10px 20px;
+  align-items: center;
+  gap: 10px;
+  background: #6366f1;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 15px;
+  padding: 12px 15px;
+  width: 100%;
   cursor: pointer;
-  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
-.cancel-btn {
-  background-color: #3498db;
+nav button:hover {
+  background: #818cf8;
+}
+
+/* Main Dashboard Content */
+.dashboard-content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #f9fafb;
+  height: 100vh;
+  overflow-y: auto;
+}
+.dashboard-content::-webkit-scrollbar{
+  display: none;
+}
+.posts-section::-webkit-scrollbar{
+  display: none;
+}
+.dashboard-content h1 {
+  font-size: 32px;
+  color: #1f2937;
+  margin-bottom: 30px;
+}
+
+/* Posts Section */
+.posts-section {
+  /* background-color: #111827; */
+  margin-top: 20px;
+  height: 100vh;
+  overflow: hidden;
+  overflow-y: scroll;
+  padding-bottom: 10px;
+}
+
+.approved-section h2,
+.disapproved-section h2 {
+  font-size: 24px;
+  color: #374151;
+  margin-bottom: 20px;
+}
+
+/* Posts Grid */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+/* Post Card */
+.post-card {
+  background: #deedff;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  cursor: grab;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.post-card h3 {
+  color: #111827;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Buttons inside Cards */
+.Approved-btn{
+  gap: 10px;
+  display: flex;
+}
+.screen-content button {
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
   color: white;
+  font-weight: 500;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.cancel-btn:hover {
-  background-color: #2980b9;
+
+
+.Approved-btn button:hover,
+.screen-content button:hover {
+  background-color: #2563eb;
 }
 
-.confirm-delete-btn {
-  background-color: #e74c3c;
-  color: white;
+.post-card button svg {
+  margin-right: 5px;
 }
 
-.confirm-delete-btn:hover {
-  background-color: #c0392b;
+/* Recycle Bin */
+.recycle-bin {
+  margin-top: 40px;
+  background-color: #fee2e2;
+  border: 2px dashed #ef4444;
+  border-radius: 10px;
+  padding: 25px;
+  text-align: center;
 }
 
-/* Dark Overlay when popup appears */
-.overlay {
+.recycle-bin h3 {
+  font-size: 22px;
+  color: #b91c1c;
+  margin-bottom: 10px;
+}
+
+.recycle-bin p {
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+/* Post Details (Popup) */
+.post-details {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  overflow-y: auto;
 }
 
-.admin-icon{
-  display: flex;
-  align-items: center;
-  height: 20px;
-  width: 20px;
+.details-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-height: 90vh;
+  overflow-y: auto; /* Enable scroll for content overflow */
 }
-.create-admin-btn{
+
+.details-card h2 {
+  margin-bottom: 15px;
+  font-size: 26px;
+  color: #1e293b;
+}
+
+.details-card h3 {
+  font-size: 22px;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.details-card p {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* Buttons inside Details */
+.post-details-btn{
   display: flex;
+}
+.post-details-btn button {
+  margin: 8px;
+  padding: 10px 20px;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-content: center;
   align-items: center;
   justify-content: center;
-  flex-wrap: nowrap;
-  text-wrap: nowrap;
-}
-.back-btn{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-}
-.screen-content{
-  gap: 10px;
-}
-.screen-content button{
-background: #2575fc;
-}
-.Approved-btn{
-  gap: 10px;
-}
-.Approved-btn button{
-  gap: 10px;
-  background: #2575fc;
   outline: none;
 }
-.post-details-btn button:nth-child(2){
-  background-color: rgb(248, 94, 94);
-  color: #fff;
+.post-details-btn button:nth-child(1) {
+  background-color: #31952c;
 }
-.post-details-btn button:nth-child(3){
-  margin-top: 10px;
-  background-color: rgb(94, 143, 248);
+.post-details-btn button:nth-child(2) {
+  background-color: #fd6868;
+}
+.post-details-btn button:nth-child(3) {
+  background-color: #3b82f6;
+}
+.post-details-btn button:hover {
+  margin: 8px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.post-details-btn button:hover {
+  background-color: #2563eb;
+}
+
+.post-details-btn button svg {
+  margin-right: 5px;
+}
+
+/* Recycle Bin Sidebar */
+.recycle-bin-sidebar {
+  background-color: #ff4d50df;
+  color: #eeebeb;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border:  3px dotted red;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  margin-top: 40px;
+}
+
+.recycle-bin-sidebar:hover {
+  background-color: #ff7875;
+}
+
+.recycle-bin-sidebar svg {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.Approved-btn button:nth-child(1){
+  background-color: #3b82f6;
   color: #fff;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+.Approved-btn button:nth-child(2){
+  background-color: #fd6868;
+  color: #fff;
+  height: 50px;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar-nav ul, .sidebar-nav li, .sidebar-nav button{
+  border: none;
+  outline: none;
+}
+.screen-content button{
+  outline: none;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-wrap: nowrap;
+}
+.screen-content button:nth-child(2){
+  background-color: #5ec559ed;
+  display: flex;
+
+}
+.screen-content{
+  display: flex;
+}
+.admin-blog-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+.search-bar-admin{
+  height: 40px;
+  width: 30%;
+  background: #e7e3e3;
+  border-radius: 20px;
+  padding: 10px;
+}
+@media (max-width: 1000px) {
+  .search-bar-admin{
+    width: 70%;
+  }
 }

@@ -133,3 +133,31 @@
     background-color: #004d99;
   }
  
+
+  .formatting-icons {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  
+  .formatting-icons button {
+    padding: 5px 10px;
+    font-size: 18px;
+    cursor: pointer;
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .preview-container {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #fafafa;
+    border-radius: 5px;
+  }
+  
+  .preview-content {
+    min-height: 100px;
+  }
+  

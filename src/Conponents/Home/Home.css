@@ -26,6 +26,7 @@ button{
     height: fit-content;
     width: 270px;
     height: 410px;
+    overflow: hidden;
     padding: 20px 10px;
     border: 1px solid #e6e5e5;
     background-color: #fcfeff;

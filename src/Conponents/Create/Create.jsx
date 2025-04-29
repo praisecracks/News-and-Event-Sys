@@ -1,30 +1,43 @@
 import "./Create.css";
 import deleteImg from "../../Asset/delete.svg";
 import createImg from "../../Asset/gallery.svg";
-import defaultImage from "../../Asset/Book study.jpg"; 
-import { useState } from "react";
+import defaultImage from "../../Asset/Book study.jpg";
+import { useState, useRef, useEffect } from "react";
 import Header from "../../Containers/Header/Header";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../Context/Firebase";
 import { useUser } from "../../Context/UserContext";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import ReactQuill from "react-quill"; // Import ReactQuill
+import "react-quill/dist/quill.snow.css"; // Import the necessary styles
 
 function Create() {
-  const [imageURL, setImage] = useState(null); // Start with no image selected
-  const [isDefaultImage, setIsDefaultImage] = useState(false); // To toggle default image
+  const [imageURL, setImage] = useState(null);
+  const [isDefaultImage, setIsDefaultImage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [blogText, setBlogText] = useState("");
   const [blogTitle, setBlogTitle] = useState("");
-  const [File, setSelectedFile] = useState(null);
   const { currentUser } = useUser();
   const navigate = useNavigate();
+  const [File, setSelectedFile] = useState(null);
+  const [blogId, setBlogId] = useState(null); // State for the blog ID if editing
+  const location = useLocation(); // To get the current path
+  const [blogContent, setBlogContent] = useState(""); // Blog content state
+
+  useEffect(() => {
+    // Check if we are editing a blog and fetch data if needed
+    if (location.state?.blogId) {
+      setBlogId(location.state.blogId);
+      // Fetch the blog details and set it
+      // Example: fetchBlogDetails(blogId)
+    }
+  }, [location]);
 
   const handleRemoveImage = () => {
     setImage(null);
     setSelectedFile(null);
-    setIsDefaultImage(false); // Ensure the default image isn't used
+    setIsDefaultImage(false);
   };
 
   const handleFileChange = (event) => {
@@ -40,8 +53,7 @@ function Create() {
   };
 
   const handleImageUpload = async () => {
-    if (!File) return isDefaultImage ? defaultImage : null; // Only upload default if explicitly enabled
-
+    if (!File) return isDefaultImage ? defaultImage : null;
     const storage = getStorage();
     const storageRef = ref(storage, `blogs/${File.name}`);
     try {
@@ -53,30 +65,45 @@ function Create() {
     }
   };
 
-  const HandleUploadBlog = async () => {
+  const handleUploadBlog = async () => {
     setIsLoading(true);
     const imageUrl = await handleImageUpload();
 
     try {
-      if (!blogTitle) {
+      if (!blogTitle.trim()) {
         toast.error("Title is required");
         setIsLoading(false);
         return;
       }
 
+      if (!blogContent.trim()) {
+        toast.error("Content cannot be empty");
+        setIsLoading(false);
+        return;
+      }
+
       const form = {
-        image: imageUrl || null, // Image may be null if none selected
+        image: imageUrl || null,
         title: blogTitle,
         authId: currentUser?.uid || "unknown",
-        desc: blogText,
+        desc: blogContent,  // Store the rich-text content
         likes: [],
         date: new Date(),
         isVerified: false,
       };
 
-      await addDoc(collection(db, "Blogs"), form);
-      toast.success("Blog uploaded successfully!");
-      navigate("/");
+      if (blogId) {
+        // If updating, use updateDoc
+        const blogRef = doc(db, "Blogs", blogId);
+        await updateDoc(blogRef, form);
+        toast.success("Blog updated successfully!");
+      } else {
+        // If creating a new blog
+        await addDoc(collection(db, "Blogs"), form);
+        toast.success("Blog uploaded successfully!");
+      }
+
+      navigate("/"); // Navigate back to home or list of blogs
     } catch (error) {
       console.error("Error uploading blog:", error.message);
       toast.error("Failed to upload blog. Please try again.");
@@ -111,11 +138,10 @@ function Create() {
                 </div>
                 <div className="choose-file" onClick={handleRemoveImage}>
                   <img src={deleteImg} alt="Delete Icon" />
-                  <label >Remove</label>
+                  <label>Remove</label>
                 </div>
               </div>
 
-              {/* Option to Use Default Image */}
               <div className="choose-file">
                 <label>
                   <input
@@ -130,10 +156,31 @@ function Create() {
 
             <div className="input-fields">
               <label htmlFor="title">Content Title</label>
-              <textarea id="title" onChange={(e) => setBlogTitle(e.target.value)}></textarea>
-              <label htmlFor="content">Content Blog</label>
-              <textarea id="content" onChange={(e) => setBlogText(e.target.value)}></textarea>
-              <button onClick={HandleUploadBlog}>{isLoading ? "Loading..." : "Publish"}</button>
+              <textarea
+                id="title"
+                onChange={(e) => setBlogTitle(e.target.value)}
+                value={blogTitle}
+              ></textarea>
+
+              <label>Content Blog</label>
+
+              {/* ReactQuill for rich text editing */}
+              <ReactQuill
+                value={blogContent}
+                onChange={(content) => setBlogContent(content)}
+                theme="snow"
+                modules={{
+                  toolbar: [
+                    ['bold', 'italic', 'underline', 'link'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['image'],
+                  ],
+                }}
+              />
+
+              <button onClick={handleUploadBlog}>
+                {isLoading ? "Loading..." : blogId ? "Update" : "Publish"}
+              </button>
             </div>
           </div>
         </div>
