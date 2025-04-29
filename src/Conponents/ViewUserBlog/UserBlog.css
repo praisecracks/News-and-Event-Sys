@@ -29,33 +29,6 @@
     width: 100%;
 }
 
-.head .div h5{
-    color: #109603;
-}
-
-
-.image-connect {
-  width: 100%; /* Full width of the parent */
-  max-width: 1200px; /* Optional: limit the max width */
-  aspect-ratio: 16 / 9; /* Maintain a rectangular aspect ratio */
-  border: 3px solid #f1c40f; /* Gold border */
-  border-radius: 12px; /* Rounded corners */
-  overflow: hidden; /* Prevent the image from spilling outside */
-  margin: 20px auto; /* Center the banner horizontally */
-  background-color: #779cf4; /* Fallback background color */
-  box-shadow: 0 4px 10px rgba(0, 0, 10, 0.25); 
-  padding: 10px 0px;
-}
-
-.image-connect img {
-    width: 100%;
-    margin: 0 !important;
-    height: 100% !important;
-    object-fit: contain !important; 
-    object-position: center; 
-    display: block; 
-    border-radius: 10px;
-}
 .userBlog-container{
     /* background-color: purple; */
     width: 100%;

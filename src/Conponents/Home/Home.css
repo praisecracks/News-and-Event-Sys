@@ -140,3 +140,30 @@ cursor: pointer;
     border-radius: 100%;
     background-color: rgb(163, 161, 161);
 }
+.blog-text {
+    max-height: 150px; 
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
+  
+  .readmorebutton{
+    position: relative;
+  }
+  .clamped-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;  /* Adjust to the number of lines you want */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 6.5em;  /* Approx height for 4 lines depending on font size */
+  }
+  
+  .like{
+    display: flex;
+    padding: 7px 5px;
+    background: #f3f3f443;
+    text-wrap: nowrap;
+    border-radius: 5px;
+  }

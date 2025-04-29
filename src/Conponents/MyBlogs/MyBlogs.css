@@ -6,9 +6,6 @@
 }
 
 .MyBlogs {
-    /* padding: 20px; */
-    /* max-width: 900px; */
-    /* margin: 0 auto;/ */
     background-color: #f9f9f9;
     border-radius: 10px;
     margin-top: 20px
@@ -21,7 +18,7 @@
     position: fixed;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     height: 78px;
     background-color: #faf8f8;
@@ -89,11 +86,11 @@
   }
   
   .blog-card {
-    background-color: #fff;
+    background-color: #dcdfdf;
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   
@@ -154,6 +151,7 @@
     margin-top: 20px;
   }
   
+  
   .actions button {
     display: flex;
     align-items: center;
@@ -176,9 +174,31 @@
     object-fit: cover;
     height: 300px;
     border-radius: 20px;
-    background-color: #fff;
+    /* background-color: #f1f1f1; */
   }
-/* 
-  yeah admin page, student page. 
-for admin now it will have notification page to check pending post of the student that should be approve or decline, profile page setting page . my blog page
-for student it will have the list of the page the admin have except from the notification page  */
+  .image-connect {
+    width: 100%; 
+    max-width: 1200px; 
+    aspect-ratio: 16 / 9; 
+    /* border: 3px solid #f1c40f;  */
+    border-radius: 12px; 
+    overflow: hidden;
+    margin: 20px auto; 
+    background-color: #000;
+    box-shadow: 0 4px 10px rgba(0, 0, 10, 0.25); 
+    padding: 10px 0px;
+  }
+
+  
+.head .div h5{
+  color: #109603;
+}
+.image-connect img {
+  width: 100%;
+  margin: 0 !important;
+  height: 100% !important;
+  object-fit: contain !important; 
+  object-position: center; 
+  display: block; 
+  border-radius: 10px;
+}
