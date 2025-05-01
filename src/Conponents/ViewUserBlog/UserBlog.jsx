@@ -1,65 +1,65 @@
-import { useState, useEffect } from "react";
-import "./userBlog.css";
-import like from '../../Asset/userLike.png';
-import Header from "../../Containers/Header/Header";
+// 
+
+
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router";
-import { collection, onSnapshot, query, addDoc, serverTimestamp, orderBy, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../Context/Firebase";
-import useLikePost from "../../Hooks/HandleLike";
 import { useUser } from "../../Context/UserContext";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 function UserBlog() {
-  const params = useParams();
-  const id = params.id;
+  const { id } = useParams();
+  const { currentUser } = useUser();
   const [data, setData] = useState(null);
-  const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [editingMessageId, setEditingMessageId] = useState(null);
-  const [editingMessageText, setEditingMessageText] = useState("");
+  const [showChat, setShowChat] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isSubAdmin, setIsSubAdmin] = useState(false);  // New state for sub-admin
-  const [isCommentsDisabled, setIsCommentsDisabled] = useState(false); // State for comment section toggle
+  const [isSubAdmin, setIsSubAdmin] = useState(false);
+  const [isCommentsDisabled, setIsCommentsDisabled] = useState(false);
+  const anonymousUsers = useRef({});
 
   const getAnonymousId = () => {
-    const storedId = localStorage.getItem("anonymousId");
-    if (storedId) return storedId;
-    const newId = Math.floor(1000 + Math.random() * 9000);
-    localStorage.setItem("anonymousId", newId);
-    return newId;
+    let storedId = localStorage.getItem("anonymousId");
+    if (!storedId) {
+      storedId = Math.floor(1000 + Math.random() * 9000);
+      localStorage.setItem("anonymousId", storedId);
+    }
+    return storedId;
   };
 
   const [anonymousId] = useState(getAnonymousId);
-  const { currentUser } = useUser();
 
+  // Check if user is Admin/SubAdmin
   useEffect(() => {
-    if (currentUser) {
-      const postsRef = collection(db, "Blogs");
-      const q = query(postsRef);
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        snapshot.forEach((doc) => {
-          if (doc.data().userId === currentUser.uid && doc.data().status !== "pending") {
-            const message = doc.data().status === "declined"
-              ? `Your post "${doc.data().title}" has been declined.`
-              : `Your post "${doc.data().title}" has been approved and published!`;
-            alert(message);
-          }
-        });
-      });
-      return () => unsubscribe();
-    }
+    const checkAdminStatus = async () => {
+      if (currentUser) {
+        const userRef = doc(db, "Users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          setIsAdmin(userData.isAdmin);
+          setIsSubAdmin(userData.isSubAdmin);
+        }
+      }
+    };
+    checkAdminStatus();
   }, [currentUser]);
 
+  // Fetch blog data
   useEffect(() => {
-    const q = query(collection(db, "Blogs"));
-    const unsub = onSnapshot(q, (querySnapshot) => {
-      const foundPost = querySnapshot.docs.find((doc) => doc.id === id)?.data();
-      setData(foundPost ? { ...foundPost, id } : null);
+    const unsub = onSnapshot(doc(db, "Blogs", id), (docSnap) => {
+      if (docSnap.exists()) {
+        setData({ id: docSnap.id, ...docSnap.data() });
+      } else {
+        setData(null);
+      }
     });
     return () => unsub();
   }, [id]);
 
+  // Fetch comments data
   useEffect(() => {
     const commentsRef = collection(db, "Blogs", id, "Comments");
     const q = query(commentsRef, orderBy("timestamp", "asc"));
@@ -73,163 +73,59 @@ function UserBlog() {
       );
       setMessages(comments);
     });
-
     return () => unsub();
   }, [id]);
 
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (currentUser) {
-        const userRef = doc(db, "Users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          if (userData.isAdmin) {
-            setIsAdmin(true);
-          }
-          if (userData.isSubAdmin) {
-            setIsSubAdmin(true);  // Check for SubAdmin
-          }
-        }
-      }
-    };
-    checkAdminStatus();
-  }, [currentUser]);
-
-  const anonymousUsers = {};
-
+  // Fetch user role for anonymous ID or logged-in user
   const fetchUserRole = async (userId) => {
-    if (!userId) {
-      return `Anonymous${anonymousId}`;
-    }
+    if (!userId) return `Anonymous ${anonymousId}`;
     try {
       const userRef = doc(db, "Users", userId);
       const userDoc = await getDoc(userRef);
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        // Display Admin name for both Admin and SubAdmin
-        if (userData.isAdmin || userData.isSubAdmin) {
-          return "Admin";  // Treat both Admin and SubAdmin as Admin
-        }
-        if (!anonymousUsers[userId]) {
-          anonymousUsers[userId] = Math.floor(1000 + Math.random() * 9000);
-        }
-        return `Anonymous ${anonymousUsers[userId]}`;
+        if (userData.isAdmin || userData.isSubAdmin) return "Admin";
+        return `Anonymous ${userId}`;
       }
     } catch (error) {
       console.error("Error fetching user role: ", error);
     }
-    if (!anonymousUsers[userId]) {
-      anonymousUsers[userId] = Math.floor(1000 + Math.random() * 9000);
-    }
-    return `Anonymous${anonymousUsers[userId]}`;
+    return `Anonymous ${userId}`;
   };
 
-  const date = data?.date ? new Date(data.date.seconds * 1000 + data.date.nanoseconds / 1e6) : null;
-  const { likes, loading, likePost, fetchLikes } = useLikePost(data?.id, currentUser && currentUser.uid);
+  // Handle like/unlike functionality
+  const handleLike = async () => {
+    if (!currentUser) {
+      alert("Login to like this post");
+      return;
+    }
+    const postRef = doc(db, "Blogs", id);
+    await updateDoc(postRef, {
+      likes: likes?.includes(currentUser.uid)
+        ? arrayRemove(currentUser.uid)
+        : arrayUnion(currentUser.uid),
+    });
+  };
 
-  useEffect(() => {
-    fetchLikes();
-  }, [fetchLikes]);
-
+  // Handle sending a new message (comment)
   const handleSendMessage = async () => {
     if (!currentUser) {
       alert("Login to comment");
       return;
     }
 
-    if (editingMessageId) {
-      await handleUpdateMessage();
-      return;
-    }
-
-    const commentsRef = collection(db, "Blogs", id, "Comments");
-    const q = query(commentsRef);
-    const snapshot = await getDocs(q);
-
-    const userComments = snapshot.docs.filter(doc => doc.data().senderId === (currentUser?.uid || anonymousId));
-
-    if (userComments.length >= 5) {
-      alert("You have reached the maximum comment limit (5) for this post.");
-      return;
-    }
-
     if (newMessage.trim()) {
-      try {
-        await addDoc(commentsRef, {
-          text: newMessage,
-          senderId: currentUser?.uid || anonymousId,
-          timestamp: serverTimestamp(),
-        });
-        setNewMessage("");
-      } catch (error) {
-        console.error("Error posting comment: ", error);
-      }
-    }
-  };
-
-  const handleUpdateMessage = async () => {
-    if (!editingMessageId) return;
-
-    const commentRef = doc(db, "Blogs", id, "Comments", editingMessageId);
-    try {
-      await updateDoc(commentRef, {
-        text: editingMessageText,
+      const commentsRef = collection(db, "Blogs", id, "Comments");
+      await addDoc(commentsRef, {
+        text: newMessage,
+        senderId: currentUser?.uid || anonymousId,
+        timestamp: serverTimestamp(),
       });
-      setEditingMessageId(null);
-      setEditingMessageText("");
-      alert("Comment updated successfully.");
-    } catch (error) {
-      console.error("Error updating comment: ", error);
+      setNewMessage("");
     }
   };
 
-  const startEditingMessage = (msg) => {
-    setEditingMessageId(msg.id);
-    setEditingMessageText(msg.text);
-  };
-
-  const cancelEditing = () => {
-    setEditingMessageId(null);
-    setEditingMessageText("");
-  };
-
-  const handleLike = () => {
-    if (!currentUser) {
-      alert("Login to like user content");
-      return;
-    }
-    if (!likes?.includes(currentUser.uid)) likePost();
-  };
-
-  const handleDislike = () => {
-    if (!currentUser) {
-      alert("Login to dislike user content");
-      return;
-    }
-    if (likes?.includes(currentUser.uid)) likePost();
-  };
-
-  const handleDeleteComment = async (commentId, senderId) => {
-    if (!currentUser) {
-      alert("You need to be logged in to delete a comment.");
-      return;
-    }
-
-    // Allow deleting if user is Admin/SubAdmin or the comment sender
-    if (isAdmin || isSubAdmin || senderId === currentUser?.uid) {
-      try {
-        await deleteDoc(doc(db, "Blogs", id, "Comments", commentId));
-        alert("Comment deleted successfully.");
-      } catch (error) {
-        console.error("Error deleting comment: ", error);
-      }
-    } else {
-      alert("You are not authorized to delete this comment.");
-    }
-  };
-
-  // Toggle the comment section visibility (only accessible by Admin/SubAdmin)
+  // Handle toggling the comment section visibility
   const handleCommentToggle = () => {
     setIsCommentsDisabled((prevState) => !prevState);
   };
@@ -242,29 +138,16 @@ function UserBlog() {
           <div className="blogs-list">
             {data && (
               <div key={data.id} className="blogcard">
-                {data.image && <img src={data.image} alt="" className="blog-img"/>}
                 <h2>{data.title}</h2>
                 <p>{date?.toLocaleString()}</p>
                 <p className="blogText" dangerouslySetInnerHTML={{ __html: data.desc }}></p>
                 <div className="actions">
-                  <button onClick={handleLike} disabled={loading || likes?.includes(currentUser.uid)}>
-                    {likes?.includes(currentUser.uid) ? "Liked" : "Like"} ({likes?.length || 0})
-                    <img src={like} alt="" />
+                  <button onClick={handleLike}>
+                    {likes?.includes(currentUser.uid) ? "Liked" : "Like"}
                   </button>
-                  <button onClick={handleDislike} disabled={loading || !likes?.includes(currentUser.uid)}>
-                    {likes?.includes(currentUser.uid) ? "Disliked" : "Dislike"} ({likes?.length || 0})
-                    <img style={{ transform: "rotateX(180deg)" }} src={like} alt="" />
+                  <button onClick={handleSendMessage}>
+                    Comment
                   </button>
-                  <button onClick={() => setShowChat(!showChat)}>
-                    {showChat ? "Close Comments" : "Open Comment Section"}
-                  </button>
-
-                  {/* Show the toggle button for Admin/SubAdmin only */}
-                  {(isAdmin || isSubAdmin) && (
-                    <button onClick={handleCommentToggle}>
-                      {isCommentsDisabled ? "Enable Comments" : "Disable Comments"}
-                    </button>
-                  )}
                 </div>
               </div>
             )}
@@ -278,46 +161,20 @@ function UserBlog() {
                     <div key={msg.id} className="message">
                       <strong>{msg.displayName}</strong>: {msg.text}
                       <br />
-                      <small style={{ color: "#777" }}>{msg.timestamp?.toDate().toLocaleString()}</small>
-                      <div className="blog-delete-btn">
-                        {(isAdmin || isSubAdmin || msg.senderId === currentUser?.uid) && (
-                          <>
-                            <button className="edit-comment-btn" onClick={() => startEditingMessage(msg)}>
-                              <FaEdit />
-                            </button>
-                            <button className="delete-comment-btn" onClick={() => handleDeleteComment(msg.id, msg.senderId)}>
-                              <FaTrash />
-                            </button>
-                          </>
-                        )}
-                      </div>
+                      <small>{msg.timestamp?.toDate().toLocaleString()}</small>
                     </div>
                   ))
                 ) : (
                   <p className="no-comments">Be the first to make a comment!</p>
                 )}
               </div>
-
               <div className="chat-input">
-                {editingMessageId ? (
-                  <div>
-                    <textarea
-                      value={editingMessageText}
-                      onChange={(e) => setEditingMessageText(e.target.value)}
-                    />
-                    <button onClick={handleUpdateMessage}>Save</button>
-                    <button onClick={cancelEditing}>Cancel</button>
-                  </div>
-                ) : (
-                  <div className="summit-comment">
-                    <textarea
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Write a comment..."
-                    />
-                    <button onClick={handleSendMessage}>Send</button>
-                  </div>
-                )}
+                <textarea
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type your comment..."
+                />
+                <button onClick={handleSendMessage}>Send</button>
               </div>
             </div>
           )}

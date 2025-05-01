@@ -43,7 +43,11 @@
     /* background-color: red; */
     padding: 10px;
     display: flex;
+<<<<<<< HEAD
     align-items: start;
+=======
+    align-items: center;
+>>>>>>> origin/main
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;

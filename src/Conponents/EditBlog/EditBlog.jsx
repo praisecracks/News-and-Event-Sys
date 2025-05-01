@@ -6,6 +6,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../../Context/Firebase";
 import backImg from "../../Asset/arrow_back.svg";
 import blog from "../../Asset/Book study.jpg";
+<<<<<<< HEAD
 import ReactQuill from "react-quill"; // Import Quill
 import "react-quill/dist/quill.snow.css"; // Import Quill CSS for the snow theme
 
@@ -14,6 +15,14 @@ function Edit() {
   const [imageFile, setImageFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const { id } = useParams();
+=======
+
+function Edit() {
+  const [userData, setUserData] = useState({});
+  const [imageFile, setImageFile] = useState(null); // Track selected image file
+  const [isSaving, setIsSaving] = useState(false); // Track saving status
+  const { id } = useParams(); // Get blog ID from URL params
+>>>>>>> origin/main
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,39 +42,69 @@ function Edit() {
   const handlePictureChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+<<<<<<< HEAD
       setImageFile(file);
       const reader = new FileReader();
       reader.onload = () => {
         setUserData((prev) => ({ ...prev, image: reader.result }));
+=======
+      setImageFile(file); // Store the selected image file for upload
+      const reader = new FileReader();
+      reader.onload = () => {
+        setUserData((prev) => ({ ...prev, image: reader.result })); // Temporary image preview
+>>>>>>> origin/main
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSaveChanges = async () => {
+<<<<<<< HEAD
     setIsSaving(true);
+=======
+    setIsSaving(true); // Show "Saving Content..." in the button
+>>>>>>> origin/main
 
     try {
       const docRef = doc(db, "Blogs", id);
 
       if (imageFile) {
+<<<<<<< HEAD
+=======
+        // Upload new image to Firebase Storage
+>>>>>>> origin/main
         const storage = getStorage();
         const storageRef = ref(storage, `blog-images/${id}`);
         await uploadBytes(storageRef, imageFile);
         const imageUrl = await getDownloadURL(storageRef);
 
+<<<<<<< HEAD
         await updateDoc(docRef, { ...userData, image: imageUrl });
       } else {
+=======
+        // Save updated blog data, including new image URL
+        await updateDoc(docRef, { ...userData, image: imageUrl });
+      } else {
+        // Save text-only updates if no new image is selected
+>>>>>>> origin/main
         await updateDoc(docRef, userData);
       }
 
       alert("Changes saved successfully!");
+<<<<<<< HEAD
       navigate(-1);
+=======
+      navigate(-1); // Go back after saving
+>>>>>>> origin/main
     } catch (error) {
       console.error("Error saving changes:", error);
       alert("Failed to save changes.");
     } finally {
+<<<<<<< HEAD
       setIsSaving(false);
+=======
+      setIsSaving(false); // Reset button state after saving
+>>>>>>> origin/main
     }
   };
 
@@ -90,7 +129,11 @@ function Edit() {
               onChange={handlePictureChange}
               style={{ display: "none" }}
             />
+<<<<<<< HEAD
             <button style={{ outline: "none", cursor: "pointer", color: "White", backgroundColor: "#0077cc"}}>
+=======
+            <button style={{ outline: "none", cursor: "pointer", color: "White" }}>
+>>>>>>> origin/main
               <label htmlFor="file">Change Image</label>
             </button>
           </div>
@@ -104,6 +147,7 @@ function Edit() {
                 onChange={(e) => setUserData((prev) => ({ ...prev, title: e.target.value }))}
               />
               <h2>Edit Text</h2>
+<<<<<<< HEAD
               <ReactQuill
                 value={userData.desc || ""}
                 onChange={(content) => setUserData((prev) => ({ ...prev, desc: content }))}
@@ -115,6 +159,11 @@ function Edit() {
                     ['image'],
                   ],
                 }}
+=======
+              <textarea
+                value={userData.desc || ""}
+                onChange={(e) => setUserData((prev) => ({ ...prev, desc: e.target.value }))}
+>>>>>>> origin/main
               />
             </div>
           </div>

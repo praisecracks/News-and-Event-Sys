@@ -112,7 +112,11 @@ function Login() {
                   <div className="input">
                     <label htmlFor="email">Email:</label><br />
                     <input type="email" name="email" id="emailrecovery" onChange={(e) => setEmail(e.target.value)} placeholder="Enter Recover Email" required />
+<<<<<<< HEAD
                   </div>
+=======
+                    <p>Return Back to <a onClick={() => { setSignState("Welcome back!") }}>Sign in</a></p>                  </div>
+>>>>>>> origin/main
                   <button type="submit" onClick={() => HandleRecoverAccount()}>Proceed</button>
                 </div>
               ) : (
@@ -162,6 +166,10 @@ function Login() {
                       style={{ cursor: "pointer" }}
                     />
                     {signState === "Create an account" ? null : (
+<<<<<<< HEAD
+=======
+                      // eslint-disable-next-line react/no-unescaped-entities
+>>>>>>> origin/main
                       <span className="forget">Can't remember? <a onClick={() => { setSignState("Recover Your Account") }}>Forget Password</a></span>
                     )}
                   </div>

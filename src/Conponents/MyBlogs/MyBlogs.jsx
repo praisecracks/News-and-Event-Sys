@@ -37,7 +37,6 @@ function MyBlogs() {
 
   const SingleBlogs = Data?.filter((e) => e.authId === Auth_id);
 
-  // Filtered Blogs Logic
   const filteredBlogs = SingleBlogs?.filter((blog) => {
     const titleMatch = blog.title?.toLowerCase().includes(searchTerm.toLowerCase());
     const descMatch = blog.desc?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -59,24 +58,36 @@ function MyBlogs() {
   return (
     <div className="MyBlogs">
       <div className="head">
-        
-          <div className="blog-home-link">
-            <li>
-              <Link to="/home">Home</Link>
-            </li>
-          </div>
-        <div className="diver">
-          <h5>My Publications</h5>
+        <div className="blog-home-link">
+          <li>
+            <Link to="/home">Home</Link>
+          </li>
         </div>
 
-        <div className="srch">
-          <input
-            type="text"
-            placeholder="Search blogs..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
-          />
+        <div className="diver">
+          <h5>My Publications</h5>
+
+          <nav>
+            <ul>
+              <li>
+                <Link to="/home">Home</Link>
+              </li>
+            </ul>
+          </nav>
+
+          <div className="div">
+            <h5>My Blogs</h5>
+          </div>
+
+          <div className="srch">
+            <input
+              type="text"
+              placeholder="Search blogs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
+            />
+          </div>
         </div>
       </div>
 
@@ -84,25 +95,32 @@ function MyBlogs() {
         <div className="myblogs-list">
           {filteredBlogs && filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog) => (
-              <div className="blog-card">
-              {blog.image && <div className="image-connect"><img src={blog.image} alt="" className="user-blog-img"/></div>}
-              <h2>{blog.title}</h2>
-              <p>{blog.date instanceof Timestamp ? blog.date.toDate().toLocaleString() : "No Date Available"}</p>
-              {/* Render blog description as HTML */}
-              <p className="blog-text" dangerouslySetInnerHTML={{ __html: blog.desc }}></p>
-            
-              <div className="actions">
-                <button onClick={() => navigate(`/edit/${blog.id}`)}><img src={edit} alt="" />Edit</button>
-                <button onClick={() => handleDelete(blog.id)}> <img src={del} alt="" />Delete</button>
+              <div key={blog.id} className="blog-card">
+                {blog.image && (
+                  <div className="image-connect">
+                    <img src={blog.image} alt="blog" className="user-blog-img" />
+                  </div>
+                )}
+                <h2>{blog.title}</h2>
+                <p>{blog.date instanceof Timestamp ? blog.date.toDate().toLocaleString() : "No Date Available"}</p>
+                <p className="blog-text" dangerouslySetInnerHTML={{ __html: blog.desc }}></p>
+
+                <div className="actions">
+                  <button onClick={() => navigate(`/edit/${blog.id}`)}>
+                    <img src={edit} alt="edit" /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(blog.id)}>
+                    <img src={del} alt="delete" /> Delete
+                  </button>
+                </div>
               </div>
-            </div>
-            
             ))
           ) : (
             <p className="no-blogs">{isLoading ? "Loading...." : "No blogs found."}</p>
           )}
         </div>
       </div>
+
       <Footer />
     </div>
   );

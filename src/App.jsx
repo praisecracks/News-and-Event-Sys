@@ -8,7 +8,11 @@ import MyBlogs from "./Conponents/MyBlogs/MyBlogs.jsx";
 import Profile from "./Conponents/Profile/Profile.jsx";
 import Admin from "./Conponents/AdminPage/Admin.jsx";
 import "./App.jsx";
+<<<<<<< HEAD
 import { Routes, Route, Navigate } from "react-router-dom";
+=======
+import { Routes, Route } from "react-router-dom";
+>>>>>>> origin/main
 import AdminForm from "./Conponents/AdminPage/AdminForm.jsx";
 import About from "./Conponents/About/About.jsx";
 import UserBlog from "./Conponents/ViewUserBlog/UserBlog.jsx";

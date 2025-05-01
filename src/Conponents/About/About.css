@@ -127,7 +127,16 @@ p{
     margin-top: 100px;
     /* background-color: red; */
 }
+<<<<<<< HEAD
 
+=======
+.mid{
+    margin-top: 80px;
+    display: flex;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+>>>>>>> origin/main
 .mid .load h2{
     text-align: left;
 }
