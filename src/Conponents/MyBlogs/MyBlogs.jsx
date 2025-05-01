@@ -59,15 +59,14 @@ function MyBlogs() {
   return (
     <div className="MyBlogs">
       <div className="head">
-        <nav>
-          <ul>
+        
+          <div className="blog-home-link">
             <li>
               <Link to="/home">Home</Link>
             </li>
-          </ul>
-        </nav>
-        <div className="div">
-          <h5>My Blogs</h5>
+          </div>
+        <div className="diver">
+          <h5>My Publications</h5>
         </div>
 
         <div className="srch">
@@ -82,11 +81,11 @@ function MyBlogs() {
       </div>
 
       <div className="mid">
-        <div className="blogs-list">
+        <div className="myblogs-list">
           {filteredBlogs && filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog) => (
               <div className="blog-card">
-              {blog.image && <div className="image-connect"><img src={blog.image} alt="" /></div>}
+              {blog.image && <div className="image-connect"><img src={blog.image} alt="" className="user-blog-img"/></div>}
               <h2>{blog.title}</h2>
               <p>{blog.date instanceof Timestamp ? blog.date.toDate().toLocaleString() : "No Date Available"}</p>
               {/* Render blog description as HTML */}

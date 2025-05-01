@@ -241,11 +241,11 @@ function UserBlog() {
         <div className="userBlog-container">
           <div className="blogs-list">
             {data && (
-              <div key={data.id} className="blog-card">
-                {data.image && <img src={data.image} alt="" />}
+              <div key={data.id} className="blogcard">
+                {data.image && <img src={data.image} alt="" className="blog-img"/>}
                 <h2>{data.title}</h2>
                 <p>{date?.toLocaleString()}</p>
-                <p className="blog-text" dangerouslySetInnerHTML={{ __html: data.desc }}></p>
+                <p className="blogText" dangerouslySetInnerHTML={{ __html: data.desc }}></p>
                 <div className="actions">
                   <button onClick={handleLike} disabled={loading || likes?.includes(currentUser.uid)}>
                     {likes?.includes(currentUser.uid) ? "Liked" : "Like"} ({likes?.length || 0})

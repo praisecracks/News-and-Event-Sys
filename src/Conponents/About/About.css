@@ -127,12 +127,7 @@ p{
     margin-top: 100px;
     /* background-color: red; */
 }
-.mid{
-    margin-top: 80px;
-    display: flex;
-    gap: 50px;
-    flex-wrap: wrap;
-}
+
 .mid .load h2{
     text-align: left;
 }

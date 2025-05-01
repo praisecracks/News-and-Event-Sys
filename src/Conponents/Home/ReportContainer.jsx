@@ -110,7 +110,7 @@ function ReportContainer() {
                                         </div>
                                     )}
 
-                                    <div className="blog-text">
+                                    <div className="home-blog-text">
                                         <h1>{truncate(blogData.title, 20)}</h1>  
                                         <p className="clamped-desc"
                                         dangerouslySetInnerHTML={{
